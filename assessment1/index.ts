@@ -75,7 +75,7 @@ function interact(uInput: Input) {
   //add
   if (uInput.selectedAction == 1) {
     box.add(uInput.selectedItem);
-    console.log("BOX reports", box.content);
+    console.log("added to the box:", box.content);
   }
   //delete
   if (uInput.selectedAction == 2) {
@@ -86,11 +86,7 @@ function interact(uInput: Input) {
     box.empty();
   }
   console.log(box.size, uInput.selectedItem);
-  // console.log("here", smallBox, bigBox);
 }
-// const myPaper = new Paper();
-// myPaper.grams = 10;
-// myPaper.size = paperSize.A4;
 
 const rli = require("readline").createInterface({
   input: process.stdin,

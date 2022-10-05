@@ -22,7 +22,7 @@ class Pencil implements weight {
 
 class Paper implements weight {
   grams!: number;
-  size!: paperSize;
+  size!: string;
 }
 class Tv implements weight {
   grams!: number;
@@ -134,9 +134,19 @@ const main = async () => {
     let item = await input("What do you want to add? (1) paper (2) pencil");
     if (item == 1) {
       let i = new Paper();
-      let s = await input("What is paper size: A4, A5, A6, A7?");
+      let s = await input("What is paper size: (1)A4, (2)A5, (3)A6, (4)A7?");
       //how to address enum??
-      i.size = paperSize.A4;
+      s == 1
+        ? (i.size = paperSize.A4)
+        : s == 2
+        ? (i.size = paperSize.A5)
+        : s == 3
+        ? (i.size = paperSize.A6)
+        : s == 4
+        ? (i.size = paperSize.A7)
+        : null;
+      console.log("S", s);
+      // i.size = s;
       i.grams = Number(await input("Weight?"));
       uInput.selectedItem = i;
     } else {
@@ -151,9 +161,8 @@ const main = async () => {
     if (item == 1) {
       uInput.selectedItem = "tv";
       let i = new Tv();
-      let t = await input("What is Tv type: LCD or OLED?");
-      //how to address enum??
-      i.type = tvType.LCD;
+      let t = await input("What is Tv type: (1)LCD or (2)OLED?");
+      t == 1 ? (i.type = tvType.LCD) : t == 2 ? (i.type = tvType.OLED) : null;
       i.grams = Number(await input("Weight?"));
       uInput.selectedItem = i;
     } else {

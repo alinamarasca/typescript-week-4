@@ -68,7 +68,7 @@ function interact(uInput) {
     //add
     if (uInput.selectedAction == 1) {
         box.add(uInput.selectedItem);
-        console.log("BOX reports", box.content);
+        console.log("added to the box:", box.content);
     }
     //delete
     if (uInput.selectedAction == 2) {
@@ -79,11 +79,7 @@ function interact(uInput) {
         box.empty();
     }
     console.log(box.size, uInput.selectedItem);
-    // console.log("here", smallBox, bigBox);
 }
-// const myPaper = new Paper();
-// myPaper.grams = 10;
-// myPaper.size = paperSize.A4;
 const rli = require("readline").createInterface({
     input: process.stdin,
     output: process.stdout
@@ -112,9 +108,19 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         let item = yield input("What do you want to add? (1) paper (2) pencil");
         if (item == 1) {
             let i = new Paper();
-            let s = yield input("What is paper size: A4, A5, A6, A7?");
+            let s = yield input("What is paper size: (1)A4, (2)A5, (3)A6, (4)A7?");
             //how to address enum??
-            i.size = paperSize.A4;
+            s == 1
+                ? (i.size = paperSize.A4)
+                : s == 2
+                    ? (i.size = paperSize.A5)
+                    : s == 3
+                        ? (i.size = paperSize.A6)
+                        : s == 4
+                            ? (i.size = paperSize.A7)
+                            : null;
+            console.log("S", s);
+            // i.size = s;
             i.grams = Number(yield input("Weight?"));
             uInput.selectedItem = i;
         }

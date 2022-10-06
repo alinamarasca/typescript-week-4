@@ -1,5 +1,13 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var paperSize;
 (function (paperSize) {
     paperSize["A4"] = "A4";
@@ -31,73 +39,120 @@ class Box {
     }
     // empty
     empty() {
-        this.content = [];
+        if (this.content.length !== 0) {
+            this.content = [];
+        }
+        else {
+            console.log("This box is already empty!");
+        }
     }
     //remove
     remove() {
-        this.content.pop();
+        if (this.content.length !== 0) {
+            this.content.pop();
+        }
+        else {
+            console.log(`The ${this.size} box is empty!`);
+        }
     }
 }
-// const myPaper = new Paper();
-// myPaper.grams = 10;
-// myPaper.size = paperSize.A4;
-const readline = require("readline").createInterface({
+function interact(uInput) {
+    //create box
+    let box = new Box();
+    if (uInput.selectedBox == 1) {
+        box.size = "small";
+    }
+    if (uInput.selectedBox == 2) {
+        box.size = "big";
+    }
+    //add
+    if (uInput.selectedAction == 1) {
+        box.add(uInput.selectedItem);
+        console.log("added to the box:", box.content);
+    }
+    //delete
+    if (uInput.selectedAction == 2) {
+        box.remove();
+    }
+    //empty
+    if (uInput.selectedAction == 3) {
+        box.empty();
+    }
+    console.log(box.size, uInput.selectedItem);
+}
+const rli = require("readline").createInterface({
     input: process.stdin,
     output: process.stdout
 });
-const answers = { box: "", action: "", item: "" };
-readline.question(
-//select box
-"With which box do you want to interact? (1) Small Box, (2) Big Box ", (box) => {
-    if (`${box}` == "1") {
-        console.log(`Small Box`);
-        answers.box = box;
-    }
-    if (`${box}` == "2") {
-        console.log(`Big Box`);
-        answers.box = box;
-    }
-    answers.box = box;
-    // end box
-    // select action
-    readline.question("What do you want to do? (1) add item (2) delete item (3) empty the box", (action) => {
-        if (`${action}` == "1") {
-            console.log(`add`);
-        }
-        if (`${action}` == "2") {
-            console.log(`delete`);
-        }
-        if (`${action}` == "3") {
-            console.log(`empty`);
-        }
-        answers.action = action;
+function input(prompt) {
+    return new Promise((callbackFn, errorFn) => {
+        rli.question(prompt, (input) => {
+            callbackFn(input);
+        }, () => {
+            errorFn();
+        });
     });
-    // end action
-    // select item
-    // small;
-    if (answers.box == "1") {
-        readline.question("What do you want to add? (1) paper (2) pencil", (item) => {
-            if (`${item}` == "1") {
-                answers.item = "paper";
-            }
-            if (`${item}` == "2") {
-                answers.item = "pencil";
-            }
-        });
+}
+let uInput = {
+    selectedBox: 0,
+    selectedAction: 0,
+    selectedItem: 0
+};
+const main = () => __awaiter(void 0, void 0, void 0, function* () {
+    //box
+    uInput.selectedBox = yield input("With which box do you want to interact? (1) Small Box, (2) Big Box");
+    // action
+    uInput.selectedAction = yield input("What do you want to do? (1) add item (2) delete item (3) empty the box");
+    // add item
+    if (uInput.selectedBox == 1 && uInput.selectedAction == 1) {
+        let item = yield input("What do you want to add? (1) paper (2) pencil");
+        if (item == 1) {
+            let i = new Paper();
+            let s = yield input("What is paper size: (1)A4, (2)A5, (3)A6, (4)A7?");
+            //how to address enum??
+            s == 1
+                ? (i.size = paperSize.A4)
+                : s == 2
+                    ? (i.size = paperSize.A5)
+                    : s == 3
+                        ? (i.size = paperSize.A6)
+                        : s == 4
+                            ? (i.size = paperSize.A7)
+                            : null;
+            console.log("S", s);
+            // i.size = s;
+            i.grams = Number(yield input("Weight?"));
+            uInput.selectedItem = i;
+        }
+        else {
+            uInput.selectedItem = "pencil";
+            let i = new Pencil();
+            i.grams = Number(yield input("Weight?"));
+            uInput.selectedItem = i;
+        }
     }
-    // big
-    if (answers.box == "2") {
-        readline.question("What do you want to add? (1) tv (2) speaker (3)", (item) => {
-            if (`${item}` == "1") {
-                answers.item = "tv";
-            }
-            if (`${item}` == "2") {
-                answers.item = "pencil";
-            }
-        });
+    if (uInput.selectedBox == 2 && uInput.selectedAction == 1) {
+        let item = yield input("What do you want to add? (1) tv (2) speakers");
+        if (item == 1) {
+            uInput.selectedItem = "tv";
+            let i = new Tv();
+            let t = yield input("What is Tv type: LCD or OLED?");
+            //how to address enum??
+            i.type = tvType.LCD;
+            i.grams = Number(yield input("Weight?"));
+            uInput.selectedItem = i;
+        }
+        else {
+            uInput.selectedItem = "speakers";
+            let i = new Speaker();
+            i.grams = Number(yield input("Weight?"));
+            uInput.selectedItem = i;
+        }
     }
-    // end item
+    interact(uInput);
+    rli.close();
 });
+main();
 // const putItem = (item: any) => {
 //   // console.log("type", item instanceof Tv);
 //   if (item instanceof Paper || item instanceof Pencil) {
